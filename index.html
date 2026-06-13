@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ansh | Developer Portfolio</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- JetBrains Mono Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Fira+Code:wght@300..700&display=swap" rel="stylesheet" />
+  <!-- Devicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: ['selector', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+          },
+          colors: {
+            neon: {
+              green: '#00ff9d',
+              cyan: '#00e5ff',
+              purple: '#bf00ff',
+              pink: '#ff0080',
+            },
+            dark: {
+              900: '#050810',
+              800: '#090d1a',
+              700: '#0d1224',
+              600: '#111827',
+              500: '#1a2332',
+              400: '#243044',
+            }
+          },
+          animation: {
+            'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+            'scan-line': 'scanLine 3s linear infinite',
+            'float': 'float 4s ease-in-out infinite',
+            'fade-in-up': 'fadeInUp 0.6s ease forwards',
+            'blink': 'blink 1s step-end infinite',
+          },
+          keyframes: {
+            glowPulse: {
+              '0%, 100%': { boxShadow: '0 0 5px #00ff9d, 0 0 10px #00ff9d' },
+              '50%': { boxShadow: '0 0 20px #00ff9d, 0 0 40px #00ff9d, 0 0 60px #00ff9d' },
+            },
+            scanLine: {
+              '0%': { top: '-100%' },
+              '100%': { top: '100%' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-12px)' },
+            },
+            fadeInUp: {
+              from: { opacity: '0', transform: 'translateY(30px)' },
+              to: { opacity: '1', transform: 'translateY(0)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: '1' },
+              '50%': { opacity: '0' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="font-mono bg-dark-900 text-gray-300 overflow-x-hidden" data-theme="dark">
+
+  <!-- Scroll Progress Bar -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-0.5 z-[9999] bg-gradient-to-r from-neon-green via-neon-cyan to-neon-purple transition-all duration-100" style="width:0%"></div>
+
+  <!-- Particle Canvas Background -->
+  <canvas id="particle-canvas" class="fixed inset-0 z-0 pointer-events-none opacity-40"></canvas>
+
+  <!-- Custom Cursor Glow -->
+  <div id="cursor-glow" class="fixed pointer-events-none z-[9998] w-64 h-64 rounded-full opacity-0 transition-opacity duration-300" style="background: radial-gradient(circle, rgba(0,255,157,0.08) 0%, transparent 70%); transform: translate(-50%,-50%)"></div>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#hero" class="text-neon-green font-bold text-xl tracking-wider hover:text-neon-cyan transition-colors duration-300 group">
+        <span class="text-gray-500 group-hover:text-neon-green transition-colors">&lt;</span>
+        <span>ansh</span>
+        <span class="text-neon-cyan">.dev</span>
+        <span class="text-gray-500 group-hover:text-neon-green transition-colors">/&gt;</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <ul class="hidden md:flex items-center gap-8 text-sm">
+        <li><a href="#about" class="nav-link text-gray-400 hover:text-neon-green transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-neon-green hover:after:w-full after:transition-all after:duration-300">about</a></li>
+        <li><a href="#projects" class="nav-link text-gray-400 hover:text-neon-green transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-neon-green hover:after:w-full after:transition-all after:duration-300">projects</a></li>
+        <li><a href="#skills" class="nav-link text-gray-400 hover:text-neon-green transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-neon-green hover:after:w-full after:transition-all after:duration-300">skills</a></li>
+        <li><a href="#contact" class="nav-link text-gray-400 hover:text-neon-green transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-neon-green hover:after:w-full after:transition-all after:duration-300">contact</a></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <!-- Mobile Menu -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-400 hover:text-neon-green">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-gray-800 bg-dark-800/95 backdrop-blur-sm">
+      <ul class="px-6 py-4 space-y-3 text-sm">
+        <li><a href="#about" class="mobile-nav-link block text-gray-400 hover:text-neon-green py-2 border-l-2 border-transparent hover:border-neon-green pl-3 transition-all duration-200">about</a></li>
+        <li><a href="#projects" class="mobile-nav-link block text-gray-400 hover:text-neon-green py-2 border-l-2 border-transparent hover:border-neon-green pl-3 transition-all duration-200">projects</a></li>
+        <li><a href="#skills" class="mobile-nav-link block text-gray-400 hover:text-neon-green py-2 border-l-2 border-transparent hover:border-neon-green pl-3 transition-all duration-200">skills</a></li>
+        <li><a href="#contact" class="mobile-nav-link block text-gray-400 hover:text-neon-green py-2 border-l-2 border-transparent hover:border-neon-green pl-3 transition-all duration-200">contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO SECTION
+  ============================================================ -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center pt-16 z-10">
+    <!-- Grid background overlay -->
+    <div class="absolute inset-0 grid-bg opacity-20 pointer-events-none"></div>
+
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <!-- Terminal header line -->
+      <div class="flex items-center justify-center gap-2 mb-8 opacity-0 animate-[fadeInUp_0.5s_ease_0.1s_forwards]">
+        <div class="flex gap-1.5">
+          <div class="w-3 h-3 rounded-full bg-red-500"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div class="w-3 h-3 rounded-full bg-neon-green"></div>
+        </div>
+        <span class="text-xs text-gray-500 ml-2">~/ansh/portfolio ~ bash</span>
+      </div>
+
+      <!-- Greeting -->
+      <p class="text-neon-green text-sm md:text-base tracking-[0.3em] uppercase mb-4 opacity-0 animate-[fadeInUp_0.5s_ease_0.2s_forwards]">
+        <span class="text-gray-500">$</span> hello, world
+      </p>
+
+      <!-- Name -->
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 opacity-0 animate-[fadeInUp_0.5s_ease_0.3s_forwards]">
+        <span class="text-white">I'm </span>
+        <span class="glitch-text text-neon-green" data-text="Ansh">Ansh</span>
+      </h1>
+
+      <!-- Typing animation -->
+      <div class="text-xl md:text-2xl lg:text-3xl text-gray-400 mb-10 h-10 opacity-0 animate-[fadeInUp_0.5s_ease_0.4s_forwards]">
+        <span class="text-gray-500">// </span>
+        <span id="typing-text" class="text-neon-cyan"></span><span class="animate-blink text-neon-cyan">|</span>
+      </div>
+
+      <!-- CTA buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-[fadeInUp_0.5s_ease_0.5s_forwards]">
+        <a href="#projects" class="group relative px-8 py-3 border border-neon-green text-neon-green hover:text-dark-900 transition-all duration-300 overflow-hidden rounded-sm">
+          <span class="relative z-10 text-sm tracking-widest uppercase">View Projects</span>
+          <div class="absolute inset-0 bg-neon-green transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        </a>
+        <a href="#contact" class="group relative px-8 py-3 border border-gray-600 text-gray-400 hover:text-neon-cyan hover:border-neon-cyan transition-all duration-300 rounded-sm">
+          <span class="text-sm tracking-widest uppercase">Contact Me</span>
+        </a>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float opacity-60">
+        <span class="text-xs text-gray-600 tracking-widest">SCROLL</span>
+        <div class="w-px h-12 bg-gradient-to-b from-neon-green to-transparent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ABOUT SECTION
+  ============================================================ -->
+  <section id="about" class="relative py-24 z-10">
+    <div class="max-w-5xl mx-auto px-6">
+      <!-- Section Label -->
+      <div class="section-label mb-16 reveal">
+        <span class="text-xs text-neon-green tracking-[0.4em] uppercase">01 /</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">about_me<span class="text-neon-cyan">.txt</span></h2>
+        <div class="w-24 h-px bg-neon-green mt-4 glow-line"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12 items-start">
+        <!-- Terminal Bio -->
+        <div class="reveal terminal-block rounded-lg overflow-hidden border border-gray-700/50 hover:border-neon-green/40 transition-colors duration-500">
+          <!-- Terminal bar -->
+          <div class="flex items-center gap-2 px-4 py-3 bg-dark-700 border-b border-gray-700/50">
+            <div class="flex gap-1.5">
+              <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">about.json</span>
+          </div>
+          <!-- Content -->
+          <div class="p-6 text-sm leading-relaxed bg-dark-800/60">
+            <pre class="whitespace-pre-wrap text-left"><span class="text-gray-500">{</span>
+  <span class="text-neon-cyan">"name"</span><span class="text-gray-400">:</span> <span class="text-neon-green">"Ansh"</span><span class="text-gray-400">,</span>
+  <span class="text-neon-cyan">"role"</span><span class="text-gray-400">:</span> <span class="text-neon-green">"Full Stack Developer"</span><span class="text-gray-400">,</span>
+  <span class="text-neon-cyan">"status"</span><span class="text-gray-400">:</span> <span class="text-neon-green">"Student &amp; Builder"</span><span class="text-gray-400">,</span>
+  <span class="text-neon-cyan">"interests"</span><span class="text-gray-400">: [</span>
+    <span class="text-yellow-400">"Web Development"</span><span class="text-gray-400">,</span>
+    <span class="text-yellow-400">"Problem Solving"</span><span class="text-gray-400">,</span>
+    <span class="text-yellow-400">"ML Enthusiast"</span><span class="text-gray-400">,</span>
+    <span class="text-yellow-400">"DSA &amp; Algorithms"</span>
+  <span class="text-gray-400">],</span>
+  <span class="text-neon-cyan">"currently"</span><span class="text-gray-400">:</span> <span class="text-neon-green">"Building cool stuff 🚀"</span>
+<span class="text-gray-500">}</span></pre>
+          </div>
+        </div>
+
+        <!-- About text + quick facts -->
+        <div class="space-y-6 reveal">
+          <p class="text-gray-400 leading-relaxed text-sm">
+            Hey! I'm Ansh — a passionate developer and student who loves turning ideas into real-world applications. I enjoy the entire spectrum of web development, from crafting pixel-perfect UIs to architecting robust backend systems.
+          </p>
+          <p class="text-gray-400 leading-relaxed text-sm">
+            When I'm not coding, I'm grinding LeetCode challenges, exploring new technologies, or contributing to open-source projects. I believe in writing clean, efficient code and building things that actually matter.
+          </p>
+
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-2 gap-4 pt-4">
+            <div class="stat-card p-4 border border-gray-700/50 rounded-lg hover:border-neon-green/50 transition-all duration-300 group">
+              <div class="text-2xl font-bold text-neon-green group-hover:text-neon-cyan transition-colors">5+</div>
+              <div class="text-xs text-gray-500 mt-1">Projects Built</div>
+            </div>
+            <div class="stat-card p-4 border border-gray-700/50 rounded-lg hover:border-neon-cyan/50 transition-all duration-300 group">
+              <div class="text-2xl font-bold text-neon-cyan group-hover:text-neon-green transition-colors">70+</div>
+              <div class="text-xs text-gray-500 mt-1">LeetCode Problems</div>
+            </div>
+            <div class="stat-card p-4 border border-gray-700/50 rounded-lg hover:border-neon-purple/50 transition-all duration-300 group">
+              <div class="text-2xl font-bold text-neon-purple group-hover:text-neon-green transition-colors">5+</div>
+              <div class="text-xs text-gray-500 mt-1">Tech Stacks</div>
+            </div>
+            <div class="stat-card p-4 border border-gray-700/50 rounded-lg hover:border-neon-pink/50 transition-all duration-300 group">
+                  <div class="text-2xl font-bold text-neon-pink group-hover:text-neon-green transition-colors">∞</div>
+              <div class="text-xs text-gray-500 mt-1">Lines of Code</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROJECTS SECTION
+  ============================================================ -->
+  <section id="projects" class="relative py-24 z-10">
+    <!-- Horizontal scan line decoration -->
+    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent"></div>
+
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-16 reveal">
+        <span class="text-xs text-neon-green tracking-[0.4em] uppercase">02 /</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">projects<span class="text-neon-cyan">/</span></h2>
+        <div class="w-24 h-px bg-neon-green mt-4 glow-line"></div>
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Project Card 1 -->
+        <div class="project-card group relative border border-gray-700/50 rounded-lg overflow-hidden bg-dark-700/40 hover:border-neon-green/60 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,255,157,0.1)] reveal">
+          <!-- Card header bar -->
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-700/50 bg-dark-800/60">
+            <div class="flex gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60"></div>
+            </div>
+            <span class="text-xs text-gray-600">TraceRing.py</span>
+          </div>
+          <!-- Card body -->
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-white font-bold group-hover:text-neon-green transition-colors duration-300">TraceRing</h3>
+              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <a href="https://github.com/Anshgupta885/TraceRing.git" target="_blank" class="text-gray-500 hover:text-neon-green transition-colors p-1" title="GitHub">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+            <p class="text-gray-500 text-xs leading-relaxed mb-4">A production-ready web application for detecting money muling patterns, smurfing, and shell network structures in financial transaction data using advanced graph analysis algorithms.</p>
+            <!-- Tech stack -->
+            <div class="flex flex-wrap gap-2 mt-auto">
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-green/30 text-neon-green/80 rounded-sm bg-neon-green/5">React</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-cyan/30 text-neon-cyan/80 rounded-sm bg-neon-cyan/5">Node.js</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-yellow-500/30 text-yellow-500/80 rounded-sm bg-yellow-500/5">MongoDB</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-cyan/30 text-neon-cyan/80 rounded-sm bg-neon-cyan/5 flex items-center gap-1">
+                <i class="devicon-fastapi-plain colored"></i>
+                FastAPI
+              </span>
+            </div>
+          </div>
+          <!-- Hover overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-neon-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </div>
+
+        <!-- Project Card 2 -->
+        <div class="project-card group relative border border-gray-700/50 rounded-lg overflow-hidden bg-dark-700/40 hover:border-neon-cyan/60 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,229,255,0.1)] reveal">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-700/50 bg-dark-800/60">
+            <div class="flex gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60"></div>
+            </div>
+            <span class="text-xs text-gray-600">Pramaanik.js</span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-white font-bold group-hover:text-neon-cyan transition-colors duration-300">Pramaanik</h3>
+              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <a href="https://github.com/Anshgupta885/pramanik.git" target="_blank" class="text-gray-500 hover:text-neon-cyan transition-colors p-1" title="GitHub">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+            <p class="text-gray-500 text-xs leading-relaxed mb-4">Pramaanik (meaning Authentic in Sanskrit) is an AI-powered certificate verification platform designed to instantly validate the authenticity of academic and professional documents. By leveraging advanced OCR (Optical Character Recognition) and cross-referencing secure databases, Pramaanik provides a seamless and trusted environment for institutions and individuals</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-green/30 text-neon-green/80 rounded-sm bg-neon-green/5">React</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-cyan/30 text-neon-cyan/80 rounded-sm bg-neon-cyan/5 flex items-center gap-1">
+                <i class="devicon-mongodb-plain colored"></i>
+                MongoDB
+              </span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-orange-400/30 text-orange-400/80 rounded-sm bg-orange-400/5 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                Tesseract.js
+              </span>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-neon-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </div>
+
+        <!-- Project Card 3 -->
+        <div class="project-card group relative border border-gray-700/50 rounded-lg overflow-hidden bg-dark-700/40 hover:border-neon-purple/60 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(191,0,255,0.1)] reveal">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-700/50 bg-dark-800/60">
+            <div class="flex gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60"></div>
+            </div>
+            <span class="text-xs text-gray-600">LifeFlow.js</span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-white font-bold group-hover:text-neon-purple transition-colors duration-300">LifeFlow</h3>
+              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <a href="https://github.com/Anshgupta885/BloodDonation.git" target="_blank" class="text-gray-500 hover:text-neon-purple transition-colors p-1" title="GitHub">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+            <p class="text-gray-500 text-xs leading-relaxed mb-4">LifeFlow is a full-stack blood donation platform that connects donors, hospitals, requesters, and administrators in one responsive web app. It supports blood requests, donor discovery, appointments, blood-stock management, certificates, analytics, and role-based dashboards.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-cyan/30 text-neon-cyan/80 rounded-sm bg-neon-cyan/5 flex items-center gap-1">
+                <i class="devicon-react-original colored"></i>
+                React
+              </span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-green/30 text-neon-green/80 rounded-sm bg-neon-green/5 flex items-center gap-1">
+                <i class="devicon-nodejs-plain colored"></i>
+                Node.js
+              </span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-purple/30 text-neon-purple/80 rounded-sm bg-neon-purple/5 flex items-center gap-1">
+                <i class="devicon-mongodb-plain colored"></i>
+                MongoDB
+              </span>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-neon-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </div>
+
+        <!-- Project Card 4 -->
+        <div class="project-card group relative border border-gray-700/50 rounded-lg overflow-hidden bg-dark-700/40 hover:border-yellow-500/60 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(234,179,8,0.1)] reveal">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-700/50 bg-dark-800/60">
+            <div class="flex gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60"></div>
+            </div>
+            <span class="text-xs text-gray-600">project_04.ts</span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-white font-bold group-hover:text-yellow-400 transition-colors duration-300">TaskFlow API</h3>
+              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <a href="https://github.com/yourusername/taskflow-api" target="_blank" class="text-gray-500 hover:text-yellow-400 transition-colors p-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+            <p class="text-gray-500 text-xs leading-relaxed mb-4">RESTful task management API with JWT auth, role-based access control, real-time notifications, and full Swagger docs.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-green/30 text-neon-green/80 rounded-sm bg-neon-green/5">Node.js</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-cyan/30 text-neon-cyan/80 rounded-sm bg-neon-cyan/5">Express</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-yellow-500/30 text-yellow-500/80 rounded-sm bg-yellow-500/5">MongoDB</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-blue-400/30 text-blue-400/80 rounded-sm bg-blue-400/5">JWT</span>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </div>
+
+        <!-- Project Card 5 -->
+        <div class="project-card group relative border border-gray-700/50 rounded-lg overflow-hidden bg-dark-700/40 hover:border-neon-pink/60 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(255,0,128,0.1)] reveal">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-700/50 bg-dark-800/60">
+            <div class="flex gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+              <div class="w-2 h-2 rounded-full bg-neon-green/60"></div>
+            </div>
+            <span class="text-xs text-gray-600">project_05.jsx</span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-white font-bold group-hover:text-neon-pink transition-colors duration-300">WeatherDash</h3>
+              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <a href="https://github.com/yourusername/weatherdash" target="_blank" class="text-gray-500 hover:text-neon-pink transition-colors p-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+            <p class="text-gray-500 text-xs leading-relaxed mb-4">Beautiful weather dashboard with geolocation, 7-day forecasts, animated weather conditions, and air quality index.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-green/30 text-neon-green/80 rounded-sm bg-neon-green/5">React</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-blue-400/30 text-blue-400/80 rounded-sm bg-blue-400/5">OpenWeather API</span>
+              <span class="tech-tag px-2 py-0.5 text-xs border border-neon-cyan/30 text-neon-cyan/80 rounded-sm bg-neon-cyan/5">Chart.js</span>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-neon-pink/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </div>
+
+        <!-- GitHub CTA Card -->
+        <div class="project-card group relative border border-dashed border-gray-700/70 rounded-lg overflow-hidden bg-transparent hover:border-neon-green/50 transition-all duration-500 hover:-translate-y-1 flex items-center justify-center min-h-[200px] reveal">
+          <a href="https://github.com/yourusername" target="_blank" class="flex flex-col items-center gap-4 text-center p-8 w-full h-full group-hover:text-neon-green transition-colors duration-300">
+            <svg class="w-10 h-10 text-gray-600 group-hover:text-neon-green transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <div>
+              <p class="text-gray-500 group-hover:text-neon-green text-sm font-medium transition-colors">View all projects</p>
+              <p class="text-gray-600 text-xs mt-1">on GitHub →</p>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SKILLS SECTION
+  ============================================================ -->
+  <section id="skills" class="relative py-24 z-10">
+    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/20 to-transparent"></div>
+
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="section-label mb-16 reveal">
+        <span class="text-xs text-neon-green tracking-[0.4em] uppercase">03 /</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">skills<span class="text-neon-cyan">.config</span></h2>
+        <div class="w-24 h-px bg-neon-green mt-4 glow-line"></div>
+      </div>
+
+      <!-- Skills Categories -->
+      <div class="grid md:grid-cols-3 gap-8 mb-16">
+
+        <!-- Frontend -->
+        <div class="skills-category reveal">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-1 h-6 bg-neon-green rounded-full glow-line"></div>
+            <h3 class="text-white font-semibold text-sm tracking-wider">FRONTEND</h3>
+          </div>
+          <div class="space-y-4">
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-react-original colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">React</span>
+                </div>
+                <span class="text-neon-green text-xs">90%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-green to-neon-cyan rounded-full" data-width="90%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-javascript-plain colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">JavaScript</span>
+                </div>
+                <span class="text-neon-green text-xs">95%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-green to-neon-cyan rounded-full" data-width="95%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-tailwindcss-plain colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">Tailwind CSS</span>
+                </div>
+                <span class="text-neon-green text-xs">88%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-green to-neon-cyan rounded-full" data-width="88%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-html5-plain colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">HTML5 / CSS3</span>
+                </div>
+                <span class="text-neon-green text-xs">97%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-green to-neon-cyan rounded-full" data-width="97%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backend -->
+        <div class="skills-category reveal">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-1 h-6 bg-neon-cyan rounded-full" style="box-shadow: 0 0 10px #00e5ff"></div>
+            <h3 class="text-white font-semibold text-sm tracking-wider">BACKEND</h3>
+          </div>
+          <div class="space-y-4">
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-nodejs-plain colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">Node.js</span>
+                </div>
+                <span class="text-neon-cyan text-xs">85%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-cyan to-neon-purple rounded-full" data-width="85%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-express-original text-lg text-gray-400"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">Express.js</span>
+                </div>
+                <span class="text-neon-cyan text-xs">82%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-cyan to-neon-purple rounded-full" data-width="82%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-mongodb-plain colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">MongoDB</span>
+                </div>
+                <span class="text-neon-cyan text-xs">80%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-cyan to-neon-purple rounded-full" data-width="80%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <img src="https://cdn.simpleicons.org/jsonwebtokens/ffffff" alt="JWT" class="w-4 h-4 shrink-0" />
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">JWT</span>
+                </div>
+                <span class="text-neon-cyan text-xs">72%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-cyan to-neon-purple rounded-full" data-width="72%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tools -->
+        <div class="skills-category reveal">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-1 h-6 bg-neon-purple rounded-full" style="box-shadow: 0 0 10px #bf00ff"></div>
+            <h3 class="text-white font-semibold text-sm tracking-wider">TOOLS & DSA</h3>
+          </div>
+          <div class="space-y-4">
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <i class="devicon-git-plain colored text-lg"></i>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">Git / GitHub</span>
+                </div>
+                <span class="text-neon-purple text-xs">92%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full" data-width="92%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <img src="https://cdn.simpleicons.org/figma/ffffff" alt="Figma" class="w-4 h-4 shrink-0" />
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">Figma</span>
+                </div>
+                <span class="text-neon-purple text-xs">65%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full" data-width="65%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-neon-purple text-sm font-bold">&gt;_</span>
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">DSA / LeetCode</span>
+                </div>
+                <span class="text-neon-purple text-xs">78%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full" data-width="78%"></div>
+              </div>
+            </div>
+            <div class="skill-item group">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <img src="https://cdn.simpleicons.org/anthropic/ffffff" alt="Claude" class="w-4 h-4 shrink-0" />
+                  <span class="text-gray-400 text-xs group-hover:text-white transition-colors">Claude</span>
+                </div>
+                <span class="text-neon-purple text-xs">75%</span>
+              </div>
+              <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="skill-bar h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full" data-width="75%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tech Icons Grid -->
+      <div class="reveal">
+        <p class="text-xs text-gray-600 text-center mb-6 tracking-widest uppercase">// Also familiar with</p>
+        <div class="flex flex-wrap justify-center gap-6">
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-neon-green/40 transition-all duration-300 hover:-translate-y-1">
+            <i class="devicon-python-plain colored text-3xl"></i>
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">Python</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-neon-cyan/40 transition-all duration-300 hover:-translate-y-1">
+            <i class="devicon-typescript-plain colored text-3xl"></i>
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">TypeScript</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-neon-purple/40 transition-all duration-300 hover:-translate-y-1">
+            <img src="https://cdn.simpleicons.org/numpy/ffffff" alt="NumPy" class="w-8 h-8" />
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">NumPy</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-yellow-500/40 transition-all duration-300 hover:-translate-y-1">
+            <img src="https://cdn.simpleicons.org/pandas/ffffff" alt="pandas" class="w-8 h-8" />
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">pandas</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-neon-pink/40 transition-all duration-300 hover:-translate-y-1">
+            <i class="devicon-nextjs-plain text-3xl text-white"></i>
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">Next.js</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-blue-400/40 transition-all duration-300 hover:-translate-y-1">
+            <i class="devicon-figma-plain colored text-3xl"></i>
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">Figma</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-orange-400/40 transition-all duration-300 hover:-translate-y-1">
+            <img src="https://cdn.simpleicons.org/cplusplus/ffffff" alt="C++" class="w-8 h-8" />
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">C++</span>
+          </div>
+          <div class="tech-icon-badge group flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-800 hover:border-neon-green/40 transition-all duration-300 hover:-translate-y-1">
+            <svg class="w-8 h-8 text-gray-300 group-hover:text-gray-100 transition-colors" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2l2.5 6.2L21 12l-6.5 3.8L12 22l-2.5-6.2L3 12l6.5-3.8L12 2zm0 4.2L10.5 10 7 12l3.5 2 1.5 3.8 1.5-3.8 3.5-2-3.5-2L12 6.2z"/>
+            </svg>
+            <span class="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">Gemini CLI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTACT SECTION
+  ============================================================ -->
+  <section id="contact" class="relative py-24 z-10">
+    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-purple/20 to-transparent"></div>
+
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="section-label mb-16 reveal text-center">
+        <span class="text-xs text-neon-green tracking-[0.4em] uppercase">04 /</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">find_me<span class="text-neon-cyan">()</span></h2>
+        <div class="w-24 h-px bg-neon-green mt-4 glow-line mx-auto"></div>
+        <p class="text-gray-500 text-sm mt-6 max-w-md mx-auto leading-relaxed">
+          I'm always open to new opportunities and collaborations. Feel free to reach out through any of these platforms.
+        </p>
+      </div>
+
+      <!-- Contact Cards Grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+
+        <!-- GitHub -->
+        <a href="https://github.com/yourusername" target="_blank" class="contact-card group relative p-6 border border-gray-700/50 rounded-lg bg-dark-700/30 hover:border-neon-green/60 hover:bg-dark-700/60 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,255,157,0.1)] reveal overflow-hidden">
+          <div class="absolute top-3 right-3 text-xs text-gray-700 group-hover:text-neon-green/40 transition-colors font-mono">git</div>
+          <div class="flex flex-col items-center text-center gap-3">
+            <div class="w-12 h-12 rounded-lg border border-gray-700/60 group-hover:border-neon-green/50 flex items-center justify-center transition-all duration-300 group-hover:bg-neon-green/10">
+              <svg class="w-6 h-6 text-gray-400 group-hover:text-neon-green transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            </div>
+            <div>
+              <p class="text-white text-sm font-medium group-hover:text-neon-green transition-colors">GitHub</p>
+              <p class="text-gray-600 text-xs mt-1">@yourusername</p>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-neon-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </a>
+
+        <!-- LinkedIn -->
+        <a href="https://linkedin.com/in/yourusername" target="_blank" class="contact-card group relative p-6 border border-gray-700/50 rounded-lg bg-dark-700/30 hover:border-blue-500/60 hover:bg-dark-700/60 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)] reveal overflow-hidden">
+          <div class="absolute top-3 right-3 text-xs text-gray-700 group-hover:text-blue-500/40 transition-colors font-mono">ln</div>
+          <div class="flex flex-col items-center text-center gap-3">
+            <div class="w-12 h-12 rounded-lg border border-gray-700/60 group-hover:border-blue-500/50 flex items-center justify-center transition-all duration-300 group-hover:bg-blue-500/10">
+              <svg class="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </div>
+            <div>
+              <p class="text-white text-sm font-medium group-hover:text-blue-400 transition-colors">LinkedIn</p>
+              <p class="text-gray-600 text-xs mt-1">@yourusername</p>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </a>
+
+        <!-- LeetCode -->
+        <a href="https://leetcode.com/yourusername" target="_blank" class="contact-card group relative p-6 border border-gray-700/50 rounded-lg bg-dark-700/30 hover:border-orange-500/60 hover:bg-dark-700/60 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(249,115,22,0.1)] reveal overflow-hidden">
+          <div class="absolute top-3 right-3 text-xs text-gray-700 group-hover:text-orange-500/40 transition-colors font-mono">lc</div>
+          <div class="flex flex-col items-center text-center gap-3">
+            <div class="w-12 h-12 rounded-lg border border-gray-700/60 group-hover:border-orange-500/50 flex items-center justify-center transition-all duration-300 group-hover:bg-orange-500/10">
+              <svg class="w-6 h-6 text-gray-400 group-hover:text-orange-400 transition-colors" viewBox="0 0 95 111" fill="currentColor"><path d="M68.2 42.1H27.5c-2.7 0-4.9 2.2-4.9 4.9v36.6c0 2.7 2.2 4.9 4.9 4.9h40.7c2.7 0 4.9-2.2 4.9-4.9V47c0-2.7-2.2-4.9-4.9-4.9zm-27 34.4c-5.7 0-10.3-4.6-10.3-10.3s4.6-10.3 10.3-10.3 10.3 4.6 10.3 10.3-4.6 10.3-10.3 10.3zm27-36.6H27.5c-4.7 0-8.5 3.8-8.5 8.5v36.6c0 4.7 3.8 8.5 8.5 8.5h40.7c4.7 0 8.5-3.8 8.5-8.5V48.4c0-4.7-3.8-8.5-8.5-8.5z"/><path d="M41.2 76.5c-5.7 0-10.3-4.6-10.3-10.3s4.6-10.3 10.3-10.3 10.3 4.6 10.3 10.3-4.6 10.3-10.3 10.3zm0-17c-3.7 0-6.7 3-6.7 6.7s3 6.7 6.7 6.7 6.7-3 6.7-6.7-3-6.7-6.7-6.7z"/></svg>
+            </div>
+            <div>
+              <p class="text-white text-sm font-medium group-hover:text-orange-400 transition-colors">LeetCode</p>
+              <p class="text-gray-600 text-xs mt-1">@yourusername</p>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </a>
+
+        <!-- Gmail -->
+        <a href="mailto:youremail@gmail.com" class="contact-card group relative p-6 border border-gray-700/50 rounded-lg bg-dark-700/30 hover:border-red-500/60 hover:bg-dark-700/60 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(239,68,68,0.1)] reveal overflow-hidden">
+          <div class="absolute top-3 right-3 text-xs text-gray-700 group-hover:text-red-500/40 transition-colors font-mono">@</div>
+          <div class="flex flex-col items-center text-center gap-3">
+            <div class="w-12 h-12 rounded-lg border border-gray-700/60 group-hover:border-red-500/50 flex items-center justify-center transition-all duration-300 group-hover:bg-red-500/10">
+              <svg class="w-6 h-6 text-gray-400 group-hover:text-red-400 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.910 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            </div>
+            <div>
+              <p class="text-white text-sm font-medium group-hover:text-red-400 transition-colors">Gmail</p>
+              <p class="text-gray-600 text-xs mt-1">youremail@gmail.com</p>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        </a>
+
+      </div>
+
+      <!-- Terminal CTA -->
+      <div class="reveal terminal-cta max-w-2xl mx-auto border border-gray-700/50 rounded-lg overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 bg-dark-700 border-b border-gray-700/50">
+          <div class="flex gap-1.5">
+            <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">terminal</span>
+        </div>
+        <div class="p-6 bg-dark-800/60 text-sm">
+          <div class="flex items-start gap-2 mb-2">
+            <span class="text-neon-green">$</span>
+            <span class="text-gray-400 typing-cta">open --new-opportunity --from="you" --to="ansh"</span>
+          </div>
+          <div class="flex items-center gap-2 mt-4">
+            <span class="text-neon-green">→</span>
+            <span class="text-gray-300 text-xs">Connection established. Ready to collaborate!</span>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-neon-green">$</span>
+            <span class="animate-blink text-neon-green">▋</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="relative py-10 border-t border-gray-800/60 z-10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="text-sm text-gray-600">
+          <span class="text-neon-green">&lt;</span>
+          <span>built with </span>
+          <span class="text-neon-pink">♥</span>
+          <span> by </span>
+          <span class="text-white">Ansh</span>
+          <span class="text-neon-green">/&gt;</span>
+        </div>
+        <div class="text-xs text-gray-700 font-mono">
+          <span class="text-gray-600">// </span>
+          <span id="footer-time"></span>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-gray-600">
+          <a href="https://github.com/yourusername" target="_blank" class="hover:text-neon-green transition-colors">GitHub</a>
+          <span class="text-gray-800">·</span>
+          <a href="https://linkedin.com/in/yourusername" target="_blank" class="hover:text-neon-green transition-colors">LinkedIn</a>
+          <span class="text-gray-800">·</span>
+          <a href="mailto:youremail@gmail.com" class="hover:text-neon-green transition-colors">Email</a>
+        </div>
+      </div>
+      <div class="text-center mt-6 text-xs text-gray-800">
+        © 2025 Ansh. All rights reserved. Made with caffeine & curiosity ☕
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 z-50 w-10 h-10 border border-neon-green/50 text-neon-green hover:bg-neon-green hover:text-dark-900 transition-all duration-300 rounded-sm flex items-center justify-center opacity-0 translate-y-4 text-sm" title="Back to top">
+    ↑
+  </button>
+
+  <script src="js/utils.js"></script>
+  <script src="js/visual-effects.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

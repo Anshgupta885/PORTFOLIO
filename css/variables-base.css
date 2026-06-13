@@ -1,0 +1,77 @@
+/* ============================================================
+   Variables and base-level rules
+   ============================================================ */
+
+:root {
+  --neon-green: #00ff9d;
+  --neon-cyan: #00e5ff;
+  --neon-purple: #bf00ff;
+  --neon-pink: #ff0080;
+  --dark-900: #050810;
+  --dark-800: #090d1a;
+  --dark-700: #0d1224;
+  --dark-600: #111827;
+  --dark-500: #1a2332;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-green) #111;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0d1224;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--neon-green);
+  border-radius: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#navbar.scrolled {
+  background: rgba(9, 13, 26, 0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+section::before {
+  content: '';
+  display: block;
+}
+
+::selection {
+  background: rgba(0, 255, 157, 0.2);
+  color: #fff;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--neon-green);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
