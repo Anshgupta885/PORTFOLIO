@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const rootDir = __dirname;
+const rootDir = path.join(__dirname, 'public');
 const port =  3000;
 
 const contentTypes = {
