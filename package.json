@@ -5,8 +5,7 @@
   "description": "Static portfolio site served with a tiny Node server.",
   "scripts": {
     "dev": "node server.js",
-    "build:css": "tailwindcss -i ./public/css/tailwind-source.css -o ./public/css/tailwind.css",
-    "build": "npm run build:css",
+    "build": "tailwindcss -i ./public/css/tailwind-source.css -o ./public/css/tailwind.css",
     "watch": "tailwindcss -i ./public/css/tailwind-source.css -o ./public/css/tailwind.css --watch"
   },
   "devDependencies": {
