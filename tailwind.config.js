@@ -2,7 +2,6 @@
 module.exports = {
   content: [
     "./public/**/*.{html,js}",
-    "./index.html",
   ],
   darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
